@@ -10,7 +10,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { ClientService } from '../services/client.service';
 import { CreateClientDto } from '../dto/create-client.dto';
-import { successResponse } from '@/utils/api-response.util';
+
 
 @ApiTags('Clients')
 @Controller('clients')
@@ -37,11 +37,7 @@ export class ClientController {
         @Body() createClientDto: CreateClientDto,
     ): Promise<any> {
         const client = await this.clientService.register(createClientDto);
-        return successResponse(
-            client,
-            'Cliente registrado exitosamente',
-            HttpStatus.CREATED,
-        );
+        return { message: 'Cliente registrado exitosamente', data: client };
     }
 
     @Get()
@@ -53,7 +49,7 @@ export class ClientController {
     })
     async findAll(): Promise<any> {
         const clients = await this.clientService.findAll();
-        return successResponse(clients, 'Clientes obtenidos exitosamente');
+        return { message: 'Clientes obtenidos exitosamente', data: clients };
     }
 
     @Get(':document')
@@ -71,6 +67,6 @@ export class ClientController {
         @Param('document') document: string,
     ): Promise<any> {
         const client = await this.clientService.findByDocument(document);
-        return successResponse(client, 'Cliente encontrado');
+        return { message: 'Cliente encontrado', data: client };
     }
 }

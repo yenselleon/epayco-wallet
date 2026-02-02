@@ -9,7 +9,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { PaymentService } from '../services/payment.service';
 import { PaymentRequestDto } from '../dto/payment-request.dto';
 import { PaymentConfirmDto } from '../dto/payment-confirm.dto';
-import { successResponse } from '@/utils/api-response.util';
+
 
 @ApiTags('Payment')
 @Controller('payment')
@@ -38,11 +38,7 @@ export class PaymentController {
     })
     async requestPayment(@Body() dto: PaymentRequestDto): Promise<any> {
         const result = await this.paymentService.requestPayment(dto);
-        return successResponse(
-            result,
-            'Token de verificación enviado exitosamente',
-            HttpStatus.CREATED,
-        );
+        return { message: 'Token de verificación enviado exitosamente', data: result };
     }
 
     @Post('confirm')
@@ -84,10 +80,6 @@ export class PaymentController {
     })
     async confirmPayment(@Body() dto: PaymentConfirmDto): Promise<any> {
         const result = await this.paymentService.confirmPayment(dto);
-        return successResponse(
-            result,
-            'Pago confirmado exitosamente',
-            HttpStatus.OK,
-        );
+        return { message: 'Pago confirmado exitosamente', data: result };
     }
 }

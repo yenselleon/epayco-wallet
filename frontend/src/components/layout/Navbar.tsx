@@ -1,17 +1,16 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { FaWallet, FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import { Button } from '../ui/Button';
+import { useAuth } from '../../context/AuthContext';
 import styles from './Navbar.module.css';
-
-// TODO: Integrar con AuthContext real
-const isAuthenticated = false;
 
 export const Navbar = () => {
     const navigate = useNavigate();
+    const { user, logout, isAuthenticated } = useAuth();
 
     const handleLogout = () => {
-        // Implementar logout
-        navigate('/login');
+        logout();
+        navigate('/');
     };
 
     return (
@@ -27,7 +26,7 @@ export const Navbar = () => {
                         <>
                             <div className={styles.userInfo}>
                                 <FaUserCircle />
-                                <span className={styles.username}>Usuario</span>
+                                <span className={styles.username}>{user?.name || user?.document}</span>
                             </div>
                             <Button
                                 variant="ghost"

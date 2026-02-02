@@ -33,7 +33,6 @@ api.interceptors.response.use(
             toast.error(response.data.message || 'Error en la operación');
             return Promise.reject(new Error(response.data.message));
         }
-
         return response;
     },
     (error: AxiosError<EnvelopeResponse>) => {
