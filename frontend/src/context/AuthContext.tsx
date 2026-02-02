@@ -32,8 +32,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         return null;
     });
 
-    // useEffect ya no es necesario para la carga inicial
-
     const login = (document: string, phone: string, name?: string) => {
         const authUser: AuthUser = { document, phone, name };
         setUser(authUser);

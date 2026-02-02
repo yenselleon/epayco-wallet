@@ -25,12 +25,10 @@ export interface RechargeResponse {
 
 export const getBalance = async (params: GetBalanceDto): Promise<BalanceResponse> => {
     const response = await api.get<EnvelopeResponse<BalanceResponse>>('/wallet/balance', { params });
-    console.log('📦 Balance API Response:', response.data);
     return response.data.data;
 };
 
 export const rechargeWallet = async (data: RechargeWalletDto): Promise<RechargeResponse> => {
     const response = await api.post<EnvelopeResponse<RechargeResponse>>('/wallet/recharge', data);
-    console.log('📦 Recharge API Response:', response.data);
     return response.data.data;
 };

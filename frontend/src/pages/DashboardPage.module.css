@@ -37,3 +37,15 @@
     display: flex;
     flex-direction: column;
 }
+
+.paymentSection {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.paymentButton {
+    min-width: 200px;
+    font-size: 1.1rem;
+    padding: 0.875rem 2rem;
+}
