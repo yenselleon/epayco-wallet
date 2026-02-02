@@ -1,16 +1,15 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Client } from '@/entities/client.entity';
 import { CreateClientDto } from '../dto/create-client.dto';
-import { DATA_SOURCE } from '@/config/constants';
+import { REPOSITORIES } from '@/config/constants';
 
 @Injectable()
 export class ClientDao {
-  private repository: Repository<Client>;
-
-  constructor(@Inject(DATA_SOURCE) private dataSource: DataSource) {
-    this.repository = this.dataSource.getRepository(Client);
-  }
+  constructor(
+    @Inject(REPOSITORIES.CLIENT)
+    private readonly repository: Repository<Client>,
+  ) {}
 
   async save(createDto: CreateClientDto): Promise<Client> {
     const client = this.repository.create(createDto);
