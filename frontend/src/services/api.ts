@@ -2,7 +2,7 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig, AxiosResponse } from 'axios';
 import { toast } from 'react-toastify';
 
-interface EnvelopeResponse<T = any> {
+export interface EnvelopeResponse<T = any> {
     status: number;
     success: boolean;
     message: string;
@@ -11,7 +11,7 @@ interface EnvelopeResponse<T = any> {
 }
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
+    baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api',
     headers: {
         'Content-Type': 'application/json',
     },
