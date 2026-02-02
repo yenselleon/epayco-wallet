@@ -4,27 +4,21 @@ import { createEmailTransporter } from '@/config/email.config';
 
 @Injectable()
 export class EmailService {
-    private readonly logger = new Logger(EmailService.name);
-    private transporter;
+  private readonly logger = new Logger(EmailService.name);
+  private transporter;
 
-    constructor(private readonly configService: ConfigService) {
-        this.transporter = createEmailTransporter(this.configService);
-    }
+  constructor(private readonly configService: ConfigService) {
+    this.transporter = createEmailTransporter(this.configService);
+  }
 
-    /**
-     * Send OTP token via email
-     * @param email - Recipient email address
-     * @param name - Recipient name
-     * @param token - OTP token
-     */
-    async sendOtpEmail(
-        email: string,
-        name: string,
-        token: string,
-    ): Promise<void> {
-        const emailFrom = this.configService.get<string>('SMTP_FROM');
+  async sendOtpEmail(
+    email: string,
+    name: string,
+    token: string,
+  ): Promise<void> {
+    const emailFrom = this.configService.get<string>('SMTP_FROM');
 
-        const htmlContent = `
+    const htmlContent = `
       <!DOCTYPE html>
       <html>
         <head>
@@ -70,19 +64,19 @@ export class EmailService {
       </html>
     `;
 
-        try {
-            await this.transporter.sendMail({
-                from: emailFrom,
-                to: email,
-                subject: '🔐 Código de Verificación - ePayco Wallet',
-                html: htmlContent,
-            });
+    try {
+      await this.transporter.sendMail({
+        from: emailFrom,
+        to: email,
+        subject: '🔐 Código de Verificación - ePayco Wallet',
+        html: htmlContent,
+      });
 
-            this.logger.log(`OTP email sent successfully to ${email}`);
-            this.logger.log(`OTP Token for ${email}: ${token}`); // For development/testing
-        } catch (error) {
-            this.logger.error(`Failed to send OTP email to ${email}:`, error);
-            throw new Error('Error al enviar el correo electrónico');
-        }
+      this.logger.log(`OTP email sent successfully to ${email}`);
+      this.logger.log(`OTP Token for ${email}: ${token}`); // For development/testing
+    } catch (error) {
+      this.logger.error(`Failed to send OTP email to ${email}:`, error);
+      throw new Error('Error al enviar el correo electrónico');
     }
+  }
 }

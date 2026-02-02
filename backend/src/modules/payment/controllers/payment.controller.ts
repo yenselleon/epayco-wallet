@@ -8,6 +8,7 @@ import {
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { PaymentService } from '../services/payment.service';
 import { PaymentRequestDto } from '../dto/payment-request.dto';
+import { PaymentConfirmDto } from '../dto/payment-confirm.dto';
 import { successResponse } from '@/utils/api-response.util';
 
 @ApiTags('Payment')
@@ -41,6 +42,52 @@ export class PaymentController {
             result,
             'Token de verificación enviado exitosamente',
             HttpStatus.CREATED,
+        );
+    }
+
+    @Post('confirm')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Confirmar pago con token OTP' })
+    @ApiBody({ type: PaymentConfirmDto })
+    @ApiResponse({
+        status: 200,
+        description: 'Pago confirmado exitosamente',
+        schema: {
+            example: {
+                status: 200,
+                success: true,
+                message: 'Pago confirmado exitosamente',
+                data: {
+                    message: 'Pago confirmado exitosamente',
+                    newBalance: 90000,
+                    transactionId: 'f3629535-5369-4f50-ae05-6d8716c6c06a',
+                    amount: 10000,
+                },
+            },
+        },
+    })
+    @ApiResponse({
+        status: 401,
+        description: 'Token inválido',
+    })
+    @ApiResponse({
+        status: 404,
+        description: 'Sesión no encontrada',
+    })
+    @ApiResponse({
+        status: 409,
+        description: 'Transacción ya procesada',
+    })
+    @ApiResponse({
+        status: 400,
+        description: 'Token expirado o saldo insuficiente',
+    })
+    async confirmPayment(@Body() dto: PaymentConfirmDto): Promise<any> {
+        const result = await this.paymentService.confirmPayment(dto);
+        return successResponse(
+            result,
+            'Pago confirmado exitosamente',
+            HttpStatus.OK,
         );
     }
 }
