@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
 import { FaWallet, FaSync } from 'react-icons/fa';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
-import { getBalance } from '../../services/wallet.service';
 import { useAuth } from '../../context/AuthContext';
+import { useWalletBalance } from '../../hooks/useWalletBalance';
+import { formatCurrency } from '../../utils/formatters';
 import styles from './BalanceCard.module.css';
 
 interface BalanceCardProps {
@@ -12,40 +12,13 @@ interface BalanceCardProps {
 
 export const BalanceCard = ({ onBalanceLoad }: BalanceCardProps) => {
     const { user } = useAuth();
-    const [balance, setBalance] = useState<number | null>(null);
-    const [isLoading, setIsLoading] = useState(false);
 
-    const fetchBalance = async () => {
-        if (!user) return;
-
-        setIsLoading(true);
-        try {
-            const data = await getBalance({ document: user.document, phone: user.phone });
-            const balanceNum = Number(data.balance);
-            setBalance(balanceNum);
-
-            if (onBalanceLoad) {
-                onBalanceLoad(balanceNum);
-            }
-        } catch (error) {
-            console.error('Error fetching balance:', error);
-            setBalance(null);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    useEffect(() => {
-        fetchBalance();
-    }, [user]);
-
-    const formatCurrency = (value: number) => {
-        return new Intl.NumberFormat('es-CO', {
-            style: 'currency',
-            currency: 'COP',
-            minimumFractionDigits: 0,
-        }).format(value);
-    };
+    const { balance, isLoading, refresh } = useWalletBalance({
+        document: user?.document,
+        phone: user?.phone,
+        autoFetch: true,
+        onBalanceLoad,
+    });
 
     return (
         <Card className={styles.balanceCard}>
@@ -65,7 +38,7 @@ export const BalanceCard = ({ onBalanceLoad }: BalanceCardProps) => {
             <Button
                 variant="outline"
                 size="sm"
-                onClick={fetchBalance}
+                onClick={refresh}
                 isLoading={isLoading}
                 className={styles.refreshButton}
             >
