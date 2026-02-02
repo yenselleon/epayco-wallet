@@ -24,7 +24,19 @@ export const databaseProviders = [
                 connectTimeout: 60000,
             });
 
-            return dataSource.initialize();
+
+            const maxRetries = 10;
+            const retryDelay = 3000; // 3 seconds
+
+            for (let i = 0; i < maxRetries; i++) {
+                try {
+                    return await dataSource.initialize();
+                } catch (error) {
+                    console.warn(`Database connection failed (Attempt ${i + 1}/${maxRetries}). Retrying in 3s...`);
+                    if (i === maxRetries - 1) throw error;
+                    await new Promise(resolve => setTimeout(resolve, retryDelay));
+                }
+            }
         },
     },
 ];
