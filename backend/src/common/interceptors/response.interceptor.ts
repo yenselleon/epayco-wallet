@@ -6,17 +6,12 @@ import {
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { GlobalResponse } from '@/common/interfaces/global.interface';
 
-export interface Response<T> {
-    status: number;
-    success: boolean;
-    message: string;
-    data: T;
-}
 
 @Injectable()
-export class ResponseInterceptor<T> implements NestInterceptor<T, Response<T>> {
-    intercept(context: ExecutionContext, next: CallHandler): Observable<Response<T>> {
+export class ResponseInterceptor<T> implements NestInterceptor<T, GlobalResponse<T>> {
+    intercept(context: ExecutionContext, next: CallHandler): Observable<GlobalResponse<T>> {
         return next.handle().pipe(
             map((data) => {
                 const ctx = context.switchToHttp();

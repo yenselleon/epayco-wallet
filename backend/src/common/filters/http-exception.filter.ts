@@ -6,7 +6,7 @@ import {
   HttpStatus,
   Logger,
 } from '@nestjs/common';
-import { ApiResponse } from '@/utils/api-response.util';
+import { GlobalResponse } from '@/common/interfaces/global.interface';
 
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
@@ -36,7 +36,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
       `Http Status: ${status} Error Message: ${JSON.stringify(message)}`,
     );
 
-    const errorResponse: ApiResponse<null> = {
+    const errorResponse: GlobalResponse<null> = {
       status,
       success: false,
       message: Array.isArray(message) ? message.join(', ') : message,

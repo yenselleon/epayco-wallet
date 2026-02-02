@@ -1,15 +1,12 @@
-export interface ApiResponse<T = any> {
-    status: number;
-    success: boolean;
-    message: string;
-    data: T | null;
-}
+import { GlobalResponse } from "@/common/interfaces/global.interface";
+
+
 
 export function successResponse<T>(
     data: T,
     message: string = 'Success',
     status: number = 200,
-): ApiResponse<T> {
+): GlobalResponse<T> {
     return {
         status,
         success: true,
@@ -21,7 +18,7 @@ export function successResponse<T>(
 export function errorResponse(
     message: string,
     status: number = 400,
-): ApiResponse<null> {
+): GlobalResponse<null> {
     return {
         status,
         success: false,
