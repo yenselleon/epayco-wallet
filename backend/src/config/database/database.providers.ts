@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { ConfigService } from '@nestjs/config';
 import { databaseConfig } from './database.config';
-import { ArrayEntities } from './database.import';
+import { entities } from './database.import';
 
 export const DATA_SOURCE = 'DATA_SOURCE';
 
@@ -16,9 +16,9 @@ export const databaseProviders = [
                 port: databaseConfig.port,
                 username: databaseConfig.username,
                 password: databaseConfig.password,
-                database: databaseConfig.database,
-                entities: ArrayEntities,
-                synchronize: configService.get<string>('NODE_ENV') === 'development',
+                database: configService.get<string>('DB_NAME'),
+                entities: entities,
+                synchronize: true,
                 logging: configService.get<string>('NODE_ENV') === 'development',
                 poolSize: 5,
                 connectTimeout: 60000,
