@@ -29,11 +29,8 @@ export class ClientDao {
   }
 
   async updateBalance(id: string, amount: number): Promise<Client | null> {
-    const client = await this.findById(id);
-    if (!client) return null;
-
-    client.balance = Number(client.balance) + amount;
-    return await this.repository.save(client);
+    await this.repository.increment({ id }, 'balance', amount);
+    return await this.repository.findOne({ where: { id } });
   }
 
   async findAll(): Promise<Client[]> {
