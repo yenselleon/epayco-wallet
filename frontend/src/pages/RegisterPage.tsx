@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { AuthLayout } from '../layouts/AuthLayout';
 import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
@@ -11,8 +12,8 @@ import { registerClient } from '../services/client.service';
 
 const registerSchema = z.object({
     document: z.string()
-        .min(6, 'El documento debe tener al menos 6 caracteres')
-        .max(20, 'El documento no puede exceder 20 caracteres')
+        .min(6, 'El ID User debe tener al menos 6 caracteres')
+        .max(20, 'El ID User no puede exceder 20 caracteres')
         .regex(/^[0-9]+$/, 'Solo se permiten números'),
     name: z.string()
         .min(3, 'El nombre debe tener al menos 3 caracteres'),
@@ -58,11 +59,11 @@ export const RegisterPage = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-[calc(100vh-200px)]">
-            <Card className="w-full max-w-md" title="Crear Cuenta" subtitle="Regístrate para empezar a usar tu billetera">
+        <AuthLayout>
+            <Card title="Crear Cuenta" subtitle="Regístrate para empezar a usar tu billetera">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                     <Input
-                        label="Documento de Identidad"
+                        label="ID User"
                         placeholder="Ej: 1234567890"
                         error={errors.document?.message}
                         {...register('document')}
@@ -107,6 +108,6 @@ export const RegisterPage = () => {
                     </div>
                 </form>
             </Card>
-        </div>
+        </AuthLayout>
     );
 };

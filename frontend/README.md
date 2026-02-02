@@ -1,73 +1,87 @@
-# React + TypeScript + Vite
+# ePayco Wallet - Frontend 🎨
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Interfaz de usuario moderna y responsive para la billetera digital ePayco, construida con React y Vite.
 
-Currently, two official plugins are available:
+## 🛠️ Stack Tecnológico
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Core:** [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Build Tool:** [Vite](https://vitejs.dev/)
+- **Estilos:** CSS Modules + Variables CSS (Diseño adaptable)
+- **Formularios:** React Hook Form + Zod (Validación robusta)
+- **Routing:** React Router DOM
+- **HTTP Client:** Axios
+- **Notificaciones:** React Toastify
+- **Iconos:** React Icons
 
-## React Compiler
+## 🚀 Instalación y Ejecución
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+### Prerrequisitos
+- Node.js v18+
+- npm
 
-## Expanding the ESLint configuration
+### Pasos
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1. **Instalar dependencias:**
+   ```bash
+   npm install
+   ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2. **Iniciar servidor de desarrollo:**
+   ```bash
+   npm run dev
+   ```
+   El servidor iniciará en `http://localhost:5173`.
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3. **Construir para producción:**
+   ```bash
+   npm run build
+   ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+4. **Vista previa de producción:**
+   ```bash
+   npm run preview
+   ```
+
+## 📂 Estructura del Proyecto
+
+```
+src/
+├── components/         # Bloques de construcción UI
+│   ├── dashboard/      # Componentes específicos del dashboard (Stats, History, etc.)
+│   ├── layout/         # Componentes estructurales (Navbar)
+│   ├── payment/        # Modales y formularios de pago
+│   ├── ui/             # Componentes base reutilizables (Button, Card, Input)
+│   └── wallet/         # Componentes de billetera (Balance, Recarga)
+├── context/            # Contextos de React (AuthContext)
+├── layouts/            # Plantillas de paginas (AuthLayout, MainLayout)
+├── pages/              # Vistas principales (Login, Register, Dashboard)
+├── services/           # Capa de comunicación con API (Axios)
+└── styles/             # Variables globales y resets
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## ✨ Características Clave
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- **Autenticación:** Login y Registro con validación en tiempo real.
+- **Dashboard Interactivo:**
+    - Visualización de saldo.
+    - Gráficos de estadísticas (simulados).
+    - Acciones rápidas.
+- **Gestión de Billetera:**
+    - Recarga de saldo.
+    - Retiro/Pago con tokens de confirmación.
+- **Historial:** Listado de transacciones recientes.
+- **UX/UI:**
+    - Diseño Split-screen para autenticación.
+    - Feedback visual (Toasts, Spinners, Estados de error).
+    - Accesibilidad (Soporte `prefers-reduced-motion`).
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## 🔧 Scripts Disponibles
+
+- `npm run dev`: Inicia servidor de desarrollo con Hot Reload.
+- `npm run build`: Compila TypeScript y genera bundle de producción.
+- `npm run lint`: Ejecuta ESLint para verificar calidad de código.
+- `npm run preview`: Sirve la build de producción localmente.
+
+---
+
+Desarrollado para la prueba técnica de ePayco.
