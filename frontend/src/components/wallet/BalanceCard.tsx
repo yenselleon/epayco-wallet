@@ -6,7 +6,11 @@ import { getBalance } from '../../services/wallet.service';
 import { useAuth } from '../../context/AuthContext';
 import styles from './BalanceCard.module.css';
 
-export const BalanceCard = () => {
+interface BalanceCardProps {
+    onBalanceLoad?: (balance: number) => void;
+}
+
+export const BalanceCard = ({ onBalanceLoad }: BalanceCardProps) => {
     const { user } = useAuth();
     const [balance, setBalance] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -17,10 +21,14 @@ export const BalanceCard = () => {
         setIsLoading(true);
         try {
             const data = await getBalance({ document: user.document, phone: user.phone });
-            console.log('💰 Balance Data:', data);
-            setBalance(Number(data.balance));
+            const balanceNum = Number(data.balance);
+            setBalance(balanceNum);
+
+            if (onBalanceLoad) {
+                onBalanceLoad(balanceNum);
+            }
         } catch (error) {
-            console.error('❌ Error fetching balance:', error);
+            console.error('Error fetching balance:', error);
             setBalance(null);
         } finally {
             setIsLoading(false);
