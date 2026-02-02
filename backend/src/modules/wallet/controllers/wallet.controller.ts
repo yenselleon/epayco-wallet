@@ -11,7 +11,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
 import { WalletService } from '../services/wallet.service';
 import { RechargeWalletDto } from '../dto/recharge-wallet.dto';
 import { GetBalanceDto } from '../dto/get-balance.dto';
-import { successResponse } from '@/utils/api-response.util';
+
 
 @ApiTags('Wallet')
 @Controller('wallet')
@@ -36,7 +36,7 @@ export class WalletController {
     })
     async recharge(@Body() dto: RechargeWalletDto): Promise<any> {
         const result = await this.walletService.recharge(dto);
-        return successResponse(result, 'Recarga exitosa');
+        return { message: 'Recarga exitosa', data: result };
     }
 
     @Get('balance')
@@ -56,6 +56,6 @@ export class WalletController {
     })
     async getBalance(@Query() dto: GetBalanceDto): Promise<any> {
         const result = await this.walletService.getBalance(dto);
-        return successResponse(result, 'Consulta de saldo exitosa');
+        return { message: 'Consulta de saldo exitosa', data: result };
     }
 }

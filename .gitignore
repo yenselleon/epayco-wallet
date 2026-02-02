@@ -18,7 +18,7 @@ build/
 *.log
 .DS_Store
 
-context/
+.context/
 .agents/
 .agent/
 .gemini/
