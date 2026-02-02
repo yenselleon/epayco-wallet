@@ -1,5 +1,6 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import type { ReactNode } from 'react';
+import { AUTH_CONFIG } from '../utils/constants';
 
 export interface AuthUser {
     document: string;
@@ -16,35 +17,43 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const AUTH_STORAGE_KEY = 'epayco_auth_user';
-
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [user, setUser] = useState<AuthUser | null>(() => {
-        const stored = localStorage.getItem(AUTH_STORAGE_KEY);
+        const stored = localStorage.getItem(AUTH_CONFIG.STORAGE_KEY);
         if (stored) {
             try {
                 return JSON.parse(stored);
             } catch {
-                localStorage.removeItem(AUTH_STORAGE_KEY);
+                localStorage.removeItem(AUTH_CONFIG.STORAGE_KEY);
                 return null;
             }
         }
         return null;
     });
 
-    const login = (document: string, phone: string, name?: string) => {
+    const login = useCallback((document: string, phone: string, name?: string) => {
         const authUser: AuthUser = { document, phone, name };
         setUser(authUser);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(authUser));
-    };
+        localStorage.setItem(AUTH_CONFIG.STORAGE_KEY, JSON.stringify(authUser));
+    }, []);
 
-    const logout = () => {
+    const logout = useCallback(() => {
         setUser(null);
-        localStorage.removeItem(AUTH_STORAGE_KEY);
-    };
+        localStorage.removeItem(AUTH_CONFIG.STORAGE_KEY);
+    }, []);
+
+    const value = useMemo(
+        () => ({
+            user,
+            login,
+            logout,
+            isAuthenticated: !!user,
+        }),
+        [user, login, logout]
+    );
 
     return (
-        <AuthContext.Provider value={{ user, login, logout, isAuthenticated: !!user }}>
+        <AuthContext.Provider value={value}>
             {children}
         </AuthContext.Provider>
     );

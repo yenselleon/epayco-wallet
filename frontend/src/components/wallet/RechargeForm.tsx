@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { toast } from 'react-toastify';
 import { FaMoneyBillWave } from 'react-icons/fa';
 import { Card } from '../ui/Card';
@@ -9,12 +8,10 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { rechargeWallet } from '../../services/wallet.service';
 import { useAuth } from '../../context/AuthContext';
-
-const rechargeSchema = z.object({
-    amount: z.number()
-        .min(1, 'El monto mínimo es $1')
-        .max(10000000, 'El monto máximo es $10,000,000'),
-});
+import { rechargeSchema } from '../../utils/validations';
+import { formatCurrency } from '../../utils/formatters';
+import { SUCCESS_MESSAGES } from '../../utils/constants';
+import type { z } from 'zod';
 
 type RechargeFormValues = z.infer<typeof rechargeSchema>;
 
@@ -33,6 +30,10 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
         reset,
     } = useForm<RechargeFormValues>({
         resolver: zodResolver(rechargeSchema),
+        defaultValues: {
+            document: user?.document || '',
+            phone: user?.phone || '',
+        },
     });
 
     const onSubmit = async (data: RechargeFormValues) => {
@@ -41,16 +42,12 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
         setIsLoading(true);
         try {
             const result = await rechargeWallet({
-                document: user.document,
-                phone: user.phone,
+                document: data.document,
+                phone: data.phone,
                 amount: data.amount,
             });
 
-            toast.success(`Recarga exitosa. Nuevo saldo: ${new Intl.NumberFormat('es-CO', {
-                style: 'currency',
-                currency: 'COP',
-                minimumFractionDigits: 0,
-            }).format(Number(result.balance))}`);
+            toast.success(SUCCESS_MESSAGES.RECHARGE(formatCurrency(result.balance)));
 
             reset();
             onSuccess?.();
@@ -70,15 +67,17 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
         >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                 <Input
-                    label="Documento"
-                    value={user?.document || ''}
-                    disabled
+                    label="ID User"
+                    placeholder="Ej: 1234567890"
+                    error={errors.document?.message}
+                    {...register('document')}
                 />
 
                 <Input
                     label="Celular"
-                    value={user?.phone || ''}
-                    disabled
+                    placeholder="Ej: 3001234567"
+                    error={errors.phone?.message}
+                    {...register('phone')}
                 />
 
                 <Input

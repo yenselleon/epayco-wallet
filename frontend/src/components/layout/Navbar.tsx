@@ -1,7 +1,8 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { FaWallet, FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
+import { FaSignOutAlt, FaUserCircle } from 'react-icons/fa';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
+import { getFirstName } from '../../utils/formatters';
 import styles from './Navbar.module.css';
 
 export const Navbar = () => {
@@ -17,7 +18,6 @@ export const Navbar = () => {
         <nav className={styles.navbar}>
             <div className={styles.container}>
                 <Link to="/" className={styles.logo}>
-                    <FaWallet className={styles.icon} />
                     <span className={styles.brand}>ePayco Wallet</span>
                 </Link>
 
@@ -26,7 +26,9 @@ export const Navbar = () => {
                         <>
                             <div className={styles.userInfo}>
                                 <FaUserCircle />
-                                <span className={styles.username}>{user?.name || user?.document}</span>
+                                <span className={styles.username}>
+                                    {user?.name ? getFirstName(user.name) : 'Usuario'}
+                                </span>
                             </div>
                             <Button
                                 variant="ghost"
