@@ -9,6 +9,8 @@ import { Card } from '../components/ui/Card';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { registerClient } from '../services/client.service';
+import { useAuth } from '../context/AuthContext';
+import { getFirstName } from '../utils/formatters';
 
 const registerSchema = z.object({
     document: z.string()
@@ -29,6 +31,7 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const RegisterPage = () => {
     const navigate = useNavigate();
+    const { login } = useAuth();
     const [isLoading, setIsLoading] = useState(false);
 
     const {
@@ -43,14 +46,15 @@ export const RegisterPage = () => {
         setIsLoading(true);
         try {
             await registerClient(data);
-            toast.success('¡Registro exitoso! Bienvenido a ePayco Wallet.');
-            navigate('/');
+
+            login(data.document, data.phone, data.name);
+
+            toast.success(`¡Bienvenido ${getFirstName(data.name)}! Tu cuenta ha sido creada exitosamente.`);
+            navigate('/dashboard');
         } catch (error: any) {
-            // El interceptor devuelve un objeto con { message, status, originalError }
             if (error.status === 409) {
                 toast.error('Este usuario ya se encuentra registrado.');
             } else if (error.status !== 500) {
-                // Errores 400 y otros no manejados globalmente por el interceptor con toast
                 toast.error(error.message || 'Error al procesar el registro');
             }
         } finally {
@@ -63,7 +67,7 @@ export const RegisterPage = () => {
             <Card title="Crear Cuenta" subtitle="Regístrate para empezar a usar tu billetera">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                     <Input
-                        label="ID User"
+                        label="Documento"
                         placeholder="Ej: 1234567890"
                         error={errors.document?.message}
                         {...register('document')}
