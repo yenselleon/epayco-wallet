@@ -17,3 +17,9 @@ build/
 # Logs y OS
 *.log
 .DS_Store
+
+.context/
+.agents/
+.agent/
+.gemini/
+.github/

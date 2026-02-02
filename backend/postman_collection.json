@@ -1,0 +1,247 @@
+{
+    "info": {
+        "name": "ePayco Wallet API",
+        "_postman_id": "epayco-wallet-collection",
+        "description": "Colección completa de endpoints para la API de ePayco Wallet. Incluye registro de clientes, recarga de saldo y flujo de pagos con autenticación 2FA.",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "baseUrl",
+            "value": "http://localhost:3000",
+            "type": "string"
+        },
+        {
+            "key": "testDocument",
+            "value": "1234567890",
+            "type": "string"
+        },
+        {
+            "key": "testPhone",
+            "value": "3001234567",
+            "type": "string"
+        },
+        {
+            "key": "sessionId",
+            "value": "",
+            "type": "string"
+        },
+        {
+            "key": "otpToken",
+            "value": "",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Client",
+            "item": [
+                {
+                    "name": "Registrar Cliente",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"document\": \"{{testDocument}}\",\n  \"name\": \"Juan Pérez\",\n  \"email\": \"juan.perez@example.com\",\n  \"phone\": \"{{testPhone}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/clients",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "clients"
+                            ]
+                        },
+                        "description": "Registra un nuevo cliente en el sistema. El documento y email deben ser únicos."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Listar Todos los Clientes",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/clients",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "clients"
+                            ]
+                        },
+                        "description": "Obtiene la lista de todos los clientes registrados."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Buscar Cliente por Documento",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/clients/{{testDocument}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "clients",
+                                "{{testDocument}}"
+                            ]
+                        },
+                        "description": "Busca un cliente específico por su número de documento."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para gestión de clientes"
+        },
+        {
+            "name": "Wallet",
+            "item": [
+                {
+                    "name": "Recargar Saldo",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"document\": \"{{testDocument}}\",\n  \"phone\": \"{{testPhone}}\",\n  \"amount\": 50000\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet/recharge",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "wallet",
+                                "recharge"
+                            ]
+                        },
+                        "description": "Recarga el saldo de un cliente. Requiere documento y teléfono para validación."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Consultar Saldo",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{baseUrl}}/wallet/balance?document={{testDocument}}&phone={{testPhone}}",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "wallet",
+                                "balance"
+                            ],
+                            "query": [
+                                {
+                                    "key": "document",
+                                    "value": "{{testDocument}}"
+                                },
+                                {
+                                    "key": "phone",
+                                    "value": "{{testPhone}}"
+                                }
+                            ]
+                        },
+                        "description": "Consulta el saldo actual de un cliente."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para operaciones de billetera"
+        },
+        {
+            "name": "Payment",
+            "item": [
+                {
+                    "name": "Solicitar Pago (Generar OTP)",
+                    "event": [
+                        {
+                            "listen": "test",
+                            "script": {
+                                "exec": [
+                                    "if (pm.response.code === 201) {",
+                                    "    const jsonData = pm.response.json();",
+                                    "    pm.collectionVariables.set(\"sessionId\", jsonData.data.sessionId);",
+                                    "    console.log(\"SessionId guardado:\", jsonData.data.sessionId);",
+                                    "}"
+                                ],
+                                "type": "text/javascript"
+                            }
+                        }
+                    ],
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"document\": \"{{testDocument}}\",\n  \"phone\": \"{{testPhone}}\",\n  \"amount\": 10000\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/payment/request",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "payment",
+                                "request"
+                            ]
+                        },
+                        "description": "Solicita un pago y genera un token OTP que se envía por email. Guarda automáticamente el sessionId."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Confirmar Pago (Validar OTP)",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n  \"sessionId\": \"{{sessionId}}\",\n  \"token\": \"{{otpToken}}\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{baseUrl}}/payment/confirm",
+                            "host": [
+                                "{{baseUrl}}"
+                            ],
+                            "path": [
+                                "payment",
+                                "confirm"
+                            ]
+                        },
+                        "description": "Confirma un pago validando el token OTP. Descuenta el saldo de forma atómica. IMPORTANTE: Debes ingresar el token OTP recibido por email en la variable 'otpToken' antes de ejecutar."
+                    },
+                    "response": []
+                }
+            ],
+            "description": "Endpoints para flujo de pagos con autenticación 2FA"
+        }
+    ]
+}
