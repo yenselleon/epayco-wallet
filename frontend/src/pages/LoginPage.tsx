@@ -55,7 +55,7 @@ export const LoginPage = () => {
             <Card title="Iniciar Sesión" subtitle="Ingresa tus credenciales para acceder">
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                     <Input
-                        label="ID User"
+                        label="Documento"
                         placeholder="Ej: 1234567890"
                         error={errors.document?.message}
                         {...register('document')}
