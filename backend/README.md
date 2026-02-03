@@ -94,48 +94,29 @@ ePayco Wallet es una API REST desarrollada con NestJS que implementa un sistema 
 
 - **Node.js:** >= 20.x
 - **npm:** >= 10.x
-- **Docker:** >= 24.x
-- **Docker Compose:** >= 2.x
+- **Node.js:** >= 20.x
+- **npm:** >= 10.x
+- **MySQL:** >= 8.0
 
 ---
 
 ## 🚀 Instalación
 
-### Opción 1: Con Docker (Recomendado)
+### Guía de Instalación Local
+ 
+> **Requisito:** Debes tener **MySQL** instalado y ejecutándose en tu máquina.
 
+1. **Preparar Base de Datos:**
+   - Crear una base de datos llamada `epayco_wallet`.
+   - Asegurarse de tener un usuario con permisos (ej: `user` / `password`).
+
+2. **Configura Variables de Entorno**
+	
 ```bash
-# Clonar repositorio
-git clone https://github.com/yenselleon/epayco-wallet.git
-cd epayco-wallet
-
-# Construir y ejecutar contenedores
-docker-compose up -d
-
-# Verificar que los servicios estén corriendo
-docker ps
-```
-
-### Opción 2: Local
-
-```bash
-# Instalar dependencias
+# Copiar el archivo de ejemplo
 cd backend
-npm install
-
-# Compilar proyecto
-npm run build
-
-# Ejecutar en desarrollo
-npm run start:dev
+cp .env.example .env
 ```
-
----
-
-## ⚙️ Configuración
-
-### Variables de Entorno
-
-Crear archivo `.env` en la carpeta `backend/`:
 
 ```env
 # Database
@@ -157,39 +138,39 @@ SMTP_PASS=tu-app-password
 SMTP_FROM="ePayco Wallet <noreply@epayco.com>"
 ```
 
-### Configuración de Gmail
+3. **Configurar SMTP para emails OTP**
 
-1. Habilitar autenticación de 2 pasos en tu cuenta de Gmail
-2. Generar una "Contraseña de aplicación" en [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords)
-3. Usar esa contraseña en `SMTP_PASS`
-
----
-
-## 🏃 Ejecución
-
-### Con Docker
+Edita el archivo `backend/.env` y configura tu email:
 
 ```bash
-# Iniciar servicios
-docker-compose up -d
-
-# Ver logs
-docker logs epayco_api -f
-
-# Detener servicios
-docker-compose down
+# Si usas Gmail:
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=tu-email@gmail.com
+SMTP_PASS=tu-contraseña-de-aplicación
+SMTP_FROM="ePayco Wallet <noreply@epayco.com>"
 ```
 
-### Local
+**⚠️ IMPORTANTE para Gmail:**
+- NO uses tu contraseña normal
+- Debes crear una "Contraseña de Aplicación":
+  1. Ve a https://myaccount.google.com/security
+  2. Activa "Verificación en 2 pasos" si no está activa
+  3. Ve a "Contraseñas de aplicaciones": https://myaccount.google.com/apppasswords
+  4. Genera una nueva contraseña para "Correo"
+  5. Usa esa contraseña de 16 caracteres en `SMTP_PASS`
 
-```bash
-# Desarrollo
-npm run start:dev
+4. **Instalar y Ejecutar:**
+   ```bash
+   cd backend
+   
+   # Instalar dependencias
+   npm install
 
-# Producción
-npm run build
-npm run start:prod
-```
+   # Ejecutar en desarrollo
+   npm run start:dev
+   ```
+
 
 La API estará disponible en: **http://localhost:3000**
 

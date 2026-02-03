@@ -38,6 +38,7 @@ async function bootstrap() {
     .addTag('Payment', 'Flujo de pagos con autenticación OTP (2FA)')
     .addServer('http://localhost:3000', 'Servidor de Desarrollo')
     .addServer('https://api.epayco-wallet.com', 'Servidor de Producción')
+    .addBearerAuth()
     .setContact(
       'Equipo de Desarrollo',
       'https://github.com/yenselleon/epayco-wallet',

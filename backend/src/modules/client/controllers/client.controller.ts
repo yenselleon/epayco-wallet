@@ -8,14 +8,19 @@ import {
     Param,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { JwtService } from '@nestjs/jwt';
 import { ClientService } from '../services/client.service';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { LoginDto } from '../dto/login.dto';
 
 
 @ApiTags('Clients')
 @Controller('clients')
 export class ClientController {
-    constructor(private readonly clientService: ClientService) { }
+    constructor(
+        private readonly clientService: ClientService,
+        private readonly jwtService: JwtService,
+    ) { }
 
     @Post()
     @HttpCode(HttpStatus.CREATED)
@@ -38,6 +43,43 @@ export class ClientController {
     ): Promise<any> {
         const client = await this.clientService.register(createClientDto);
         return { message: 'Cliente registrado exitosamente', data: client };
+    }
+
+    @Post('login')
+    @HttpCode(HttpStatus.OK)
+    @ApiOperation({ summary: 'Iniciar sesión' })
+    @ApiBody({ type: LoginDto })
+    @ApiResponse({
+        status: 200,
+        description: 'Login exitoso',
+    })
+    @ApiResponse({
+        status: 401,
+        description: 'Credenciales inválidas',
+    })
+    async login(@Body() loginDto: LoginDto): Promise<any> {
+        const client = await this.clientService.validateClient(loginDto);
+
+
+        const payload = {
+            sub: client.id,
+            document: client.document,
+            phone: client.phone,
+        };
+
+        const access_token = await this.jwtService.signAsync(payload);
+
+        return {
+            message: 'Login exitoso',
+            data: {
+                access_token,
+                user: {
+                    document: client.document,
+                    phone: client.phone,
+                    name: client.name,
+                },
+            },
+        };
     }
 
     @Get()

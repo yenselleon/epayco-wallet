@@ -1,6 +1,7 @@
-import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { ClientDao } from '../dao/client.dao';
 import { CreateClientDto } from '../dto/create-client.dto';
+import { LoginDto } from '../dto/login.dto';
 import { Client } from '@/entities/client.entity';
 import { HTTP_MESSAGES } from '@/config/constants';
 
@@ -34,6 +35,20 @@ export class ClientService {
                 'Error al registrar el cliente',
             );
         }
+    }
+
+    async validateClient(loginDto: LoginDto): Promise<Client> {
+        const client = await this.clientDao.findByDocument(loginDto.document);
+
+        if (!client) {
+            throw new UnauthorizedException('Credenciales inválidas');
+        }
+
+        if (client.phone !== loginDto.phone) {
+            throw new UnauthorizedException('Credenciales inválidas');
+        }
+
+        return client;
     }
 
     async findByDocument(document: string): Promise<Client> {

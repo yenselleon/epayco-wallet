@@ -40,6 +40,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const logout = useCallback(() => {
         setUser(null);
         localStorage.removeItem(AUTH_CONFIG.STORAGE_KEY);
+        localStorage.removeItem('access_token');
     }, []);
 
     const value = useMemo(

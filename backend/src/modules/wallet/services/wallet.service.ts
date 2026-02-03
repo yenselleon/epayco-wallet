@@ -11,6 +11,39 @@ import { GetBalanceDto } from '../dto/get-balance.dto';
 export class WalletService {
     constructor(private readonly clientDao: ClientDao) { }
 
+    async rechargeByUserId(userId: string, amount: number) {
+        const client = await this.clientDao.findById(userId);
+
+        if (!client) {
+            throw new NotFoundException('Cliente no encontrado');
+        }
+
+        const updatedClient = await this.clientDao.updateBalance(
+            client.id,
+            amount,
+        );
+
+        return {
+            balance: updatedClient.balance,
+            message: `Recarga exitosa de ${amount}`,
+        };
+    }
+
+    async getBalanceByUserId(userId: string) {
+        const client = await this.clientDao.findById(userId);
+
+        if (!client) {
+            throw new NotFoundException('Cliente no encontrado');
+        }
+
+        return {
+            balance: client.balance,
+            document: client.document,
+            name: client.name,
+        };
+    }
+
+
     async recharge(dto: RechargeWalletDto) {
         const client = await this.clientDao.findByDocument(dto.document);
 
