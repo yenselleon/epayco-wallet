@@ -47,7 +47,11 @@ export const RegisterPage = () => {
         try {
             await registerClient(data);
 
-            login(data.document, data.phone, data.name);
+            const { loginClient } = await import('../services/client.service');
+            const response = await loginClient(data.document, data.phone);
+
+            localStorage.setItem('access_token', response.access_token);
+            login(response.user.document, response.user.phone, response.user.name);
 
             toast.success(`¡Bienvenido ${getFirstName(data.name)}! Tu cuenta ha sido creada exitosamente.`);
             navigate('/dashboard');

@@ -1,11 +1,6 @@
 import api from './api';
 import type { EnvelopeResponse } from './api';
 
-export interface GetBalanceDto {
-    document: string;
-    phone: string;
-}
-
 export interface RechargeWalletDto {
     document: string;
     phone: string;
@@ -18,17 +13,14 @@ export interface BalanceResponse {
     name: string;
 }
 
-export interface RechargeResponse {
-    message: string;
-    balance: number;
-}
-
-export const getBalance = async (params: GetBalanceDto): Promise<BalanceResponse> => {
-    const response = await api.get<EnvelopeResponse<BalanceResponse>>('/wallet/balance', { params });
+export const rechargeWallet = async (data: RechargeWalletDto): Promise<{ balance: number }> => {
+    const response = await api.post<EnvelopeResponse<{ balance: number }>>('/wallet/recharge', data);
     return response.data.data;
 };
 
-export const rechargeWallet = async (data: RechargeWalletDto): Promise<RechargeResponse> => {
-    const response = await api.post<EnvelopeResponse<RechargeResponse>>('/wallet/recharge', data);
+export const getBalance = async (document: string, phone: string): Promise<BalanceResponse> => {
+    const response = await api.get<EnvelopeResponse<BalanceResponse>>('/wallet/balance', {
+        params: { document, phone },
+    });
     return response.data.data;
 };

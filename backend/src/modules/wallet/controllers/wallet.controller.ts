@@ -3,18 +3,24 @@ import {
     Post,
     Get,
     Body,
-    Query,
     HttpCode,
     HttpStatus,
+    HttpException,
+    UseGuards,
+    Query,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { WalletService } from '../services/wallet.service';
 import { RechargeWalletDto } from '../dto/recharge-wallet.dto';
 import { GetBalanceDto } from '../dto/get-balance.dto';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { CurrentUser, AuthenticatedUser } from '@/common/decorators/current-user.decorator';
 
 
 @ApiTags('Wallet')
 @Controller('wallet')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class WalletController {
     constructor(private readonly walletService: WalletService) { }
 
@@ -27,15 +33,24 @@ export class WalletController {
         description: 'Recarga exitosa',
     })
     @ApiResponse({
-        status: 404,
-        description: 'Cliente no encontrado',
+        status: 401,
+        description: 'No autenticado',
     })
     @ApiResponse({
-        status: 400,
-        description: 'Teléfono no coincide con el documento',
+        status: 403,
+        description: 'Los datos proporcionados no coinciden con el usuario autenticado',
     })
-    async recharge(@Body() dto: RechargeWalletDto): Promise<any> {
-        const result = await this.walletService.recharge(dto);
+    async recharge(
+        @CurrentUser() user: AuthenticatedUser,
+        @Body() dto: RechargeWalletDto
+    ): Promise<any> {
+        if (dto.document !== user.document || dto.phone !== user.phone) {
+            throw new HttpException(
+                'Los datos proporcionados no coinciden con el usuario autenticado',
+                HttpStatus.FORBIDDEN
+            );
+        }
+        const result = await this.walletService.rechargeByUserId(user.id, dto.amount);
         return { message: 'Recarga exitosa', data: result };
     }
 
@@ -47,15 +62,24 @@ export class WalletController {
         description: 'Consulta exitosa',
     })
     @ApiResponse({
-        status: 404,
-        description: 'Cliente no encontrado',
+        status: 401,
+        description: 'No autenticado',
     })
     @ApiResponse({
-        status: 400,
-        description: 'Teléfono no coincide con el documento o parámetros inválidos',
+        status: 403,
+        description: 'Los datos proporcionados no coinciden con el usuario autenticado',
     })
-    async getBalance(@Query() dto: GetBalanceDto): Promise<any> {
-        const result = await this.walletService.getBalance(dto);
+    async getBalance(
+        @CurrentUser() user: AuthenticatedUser,
+        @Query() query: GetBalanceDto
+    ): Promise<any> {
+        if (query.document !== user.document || query.phone !== user.phone) {
+            throw new HttpException(
+                'Los datos proporcionados no coinciden con el usuario autenticado',
+                HttpStatus.FORBIDDEN
+            );
+        }
+        const result = await this.walletService.getBalanceByUserId(user.id);
         return { message: 'Consulta de saldo exitosa', data: result };
     }
 }

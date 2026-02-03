@@ -1,22 +1,10 @@
 import api from './api';
 import type { EnvelopeResponse } from './api';
 
-
-export interface PaymentRequestData {
-    document: string;
-    phone: string;
-    amount: number;
-}
-
 export interface PaymentRequestResponse {
     sessionId: string;
     message: string;
     expiresAt: string;
-}
-
-export interface PaymentConfirmData {
-    sessionId: string;
-    token: string;
 }
 
 export interface PaymentConfirmResponse {
@@ -26,24 +14,19 @@ export interface PaymentConfirmResponse {
     amount: number;
 }
 
-
-export const requestPayment = async (
-    data: PaymentRequestData
-): Promise<PaymentRequestResponse> => {
-    const response = await api.post<EnvelopeResponse<PaymentRequestResponse>>(
-        '/payment/request',
-        data
-    );
+export const requestPayment = async (document: string, phone: string, amount: number): Promise<PaymentRequestResponse> => {
+    const response = await api.post<EnvelopeResponse<PaymentRequestResponse>>('/payment/request', {
+        document,
+        phone,
+        amount
+    });
     return response.data.data;
 };
 
-
-export const confirmPayment = async (
-    data: PaymentConfirmData
-): Promise<PaymentConfirmResponse> => {
-    const response = await api.post<EnvelopeResponse<PaymentConfirmResponse>>(
-        '/payment/confirm',
-        data
-    );
+export const confirmPayment = async (sessionId: string, token: string): Promise<PaymentConfirmResponse> => {
+    const response = await api.post<EnvelopeResponse<PaymentConfirmResponse>>('/payment/confirm', {
+        sessionId,
+        token
+    });
     return response.data.data;
 };

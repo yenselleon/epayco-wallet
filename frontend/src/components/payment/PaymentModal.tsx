@@ -1,5 +1,5 @@
-import { useAuth } from '../../context/AuthContext';
 import { usePaymentFlow } from '../../hooks/usePaymentFlow';
+import { useAuth } from '../../context/AuthContext';
 import { useCountdown } from '../../hooks/useCountdown';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
@@ -19,10 +19,14 @@ export default function PaymentModal({
     currentBalance,
     onPaymentSuccess,
 }: PaymentModalProps) {
-    const { user } = useAuth();
+    const { user } = useAuth(); // Import useAuth to get current user data
 
     const {
         step,
+        document,
+        phone,
+        setDocument,
+        setPhone,
         amount,
         expiresAt,
         token,
@@ -34,10 +38,10 @@ export default function PaymentModal({
         handleConfirmPayment,
         resetFlow,
     } = usePaymentFlow({
-        document: user?.document || '',
-        phone: user?.phone || '',
         currentBalance,
         onPaymentSuccess,
+        userDocument: user?.document,
+        userPhone: user?.phone
     });
 
     const { formattedTime, timeLeft } = useCountdown({
@@ -69,6 +73,22 @@ export default function PaymentModal({
                         </p>
 
                         <form onSubmit={handleRequestPayment} className={styles.form}>
+                            <Input
+                                label="Documento"
+                                placeholder="Ej: 1234567890"
+                                value={document}
+                                onChange={(e) => setDocument(e.target.value)}
+                                required
+                                disabled={isRequestingPayment}
+                            />
+                            <Input
+                                label="Celular"
+                                placeholder="Ej: 3001234567"
+                                value={phone}
+                                onChange={(e) => setPhone(e.target.value)}
+                                required
+                                disabled={isRequestingPayment}
+                            />
                             <Input
                                 label="Monto a pagar"
                                 type="number"

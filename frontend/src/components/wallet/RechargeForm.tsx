@@ -30,10 +30,6 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
         reset,
     } = useForm<RechargeFormValues>({
         resolver: zodResolver(rechargeSchema),
-        defaultValues: {
-            document: user?.document || '',
-            phone: user?.phone || '',
-        },
     });
 
     const onSubmit = async (data: RechargeFormValues) => {
@@ -67,10 +63,11 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
         >
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 py-4">
                 <Input
-                    label="ID User"
+                    label="Documento"
                     placeholder="Ej: 1234567890"
                     error={errors.document?.message}
                     {...register('document')}
+                    defaultValue={user?.document}
                 />
 
                 <Input
@@ -78,8 +75,8 @@ export const RechargeForm = ({ onSuccess }: RechargeFormProps) => {
                     placeholder="Ej: 3001234567"
                     error={errors.phone?.message}
                     {...register('phone')}
+                    defaultValue={user?.phone}
                 />
-
                 <Input
                     label="Monto a Recargar"
                     type="number"

@@ -12,11 +12,10 @@ interface BalanceCardProps {
 
 export const BalanceCard = ({ onBalanceLoad }: BalanceCardProps) => {
     const { user } = useAuth();
-
     const { balance, isLoading, refresh } = useWalletBalance({
-        document: user?.document,
-        phone: user?.phone,
         autoFetch: true,
+        userDocument: user?.document,
+        userPhone: user?.phone,
         onBalanceLoad,
     });
 
