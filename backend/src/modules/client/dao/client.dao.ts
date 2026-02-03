@@ -24,8 +24,8 @@ export class ClientDao {
     return await this.repository.findOne({ where: { email } });
   }
 
-  async findById(id: string): Promise<Client | null> {
-    return await this.repository.findOne({ where: { id } });
+  async findById(id: string | number): Promise<Client | null> {
+    return await this.repository.findOne({ where: { id: id.toString() } });
   }
 
   async updateBalance(id: string, amount: number): Promise<Client | null> {

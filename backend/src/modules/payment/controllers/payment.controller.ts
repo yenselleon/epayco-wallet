@@ -4,15 +4,21 @@ import {
     Body,
     HttpCode,
     HttpStatus,
+    UseGuards,
+    HttpException,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBody } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
 import { PaymentService } from '../services/payment.service';
 import { PaymentRequestDto } from '../dto/payment-request.dto';
-import { PaymentConfirmDto } from '../dto/payment-confirm.dto';
+import { ConfirmTokenDto } from '../dto/confirm-token.dto';
+import { JwtAuthGuard } from '@/common/guards/jwt-auth.guard';
+import { CurrentUser, AuthenticatedUser } from '@/common/decorators/current-user.decorator';
 
 
 @ApiTags('Payment')
 @Controller('payment')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class PaymentController {
     constructor(private readonly paymentService: PaymentService) { }
 
@@ -25,26 +31,35 @@ export class PaymentController {
         description: 'Token enviado exitosamente al correo del cliente',
     })
     @ApiResponse({
-        status: 404,
-        description: 'Cliente no encontrado',
+        status: 401,
+        description: 'No autenticado',
+    })
+    @ApiResponse({
+        status: 403,
+        description: 'Los datos proporcionados no coinciden con el usuario autenticado',
     })
     @ApiResponse({
         status: 400,
-        description: 'Teléfono no coincide o saldo insuficiente',
+        description: 'Saldo insuficiente',
     })
-    @ApiResponse({
-        status: 500,
-        description: 'Error al enviar el correo electrónico',
-    })
-    async requestPayment(@Body() dto: PaymentRequestDto): Promise<any> {
-        const result = await this.paymentService.requestPayment(dto);
+    async requestPayment(
+        @CurrentUser() user: AuthenticatedUser,
+        @Body() dto: PaymentRequestDto
+    ): Promise<any> {
+        if (dto.document !== user.document || dto.phone !== user.phone) {
+            throw new HttpException(
+                'Los datos proporcionados no coinciden con el usuario autenticado',
+                HttpStatus.FORBIDDEN
+            );
+        }
+        const result = await this.paymentService.requestPaymentByUserId(user.id, dto.amount);
         return { message: 'Token de verificación enviado exitosamente', data: result };
     }
 
     @Post('confirm')
     @HttpCode(HttpStatus.OK)
     @ApiOperation({ summary: 'Confirmar pago con token OTP' })
-    @ApiBody({ type: PaymentConfirmDto })
+    @ApiBody({ type: ConfirmTokenDto })
     @ApiResponse({
         status: 200,
         description: 'Pago confirmado exitosamente',
@@ -64,7 +79,7 @@ export class PaymentController {
     })
     @ApiResponse({
         status: 401,
-        description: 'Token inválido',
+        description: 'Token inválido o no autenticado',
     })
     @ApiResponse({
         status: 404,
@@ -78,8 +93,11 @@ export class PaymentController {
         status: 400,
         description: 'Token expirado o saldo insuficiente',
     })
-    async confirmPayment(@Body() dto: PaymentConfirmDto): Promise<any> {
-        const result = await this.paymentService.confirmPayment(dto);
+    async confirmPayment(
+        @CurrentUser() user: AuthenticatedUser,
+        @Body() dto: ConfirmTokenDto
+    ): Promise<any> {
+        const result = await this.paymentService.confirmPaymentByUserId(user.id, dto.sessionId, dto.token);
         return { message: 'Pago confirmado exitosamente', data: result };
     }
 }
