@@ -2,7 +2,7 @@
     "info": {
         "name": "ePayco Wallet API",
         "_postman_id": "epayco-wallet-collection",
-        "description": "Colección completa de endpoints para la API de ePayco Wallet. Incluye registro de clientes, recarga de saldo y flujo de pagos con autenticación 2FA.",
+        "description": "Colección completa de endpoints para la API de ePayco Wallet.\n\n### Instrucciones de Uso:\n1. Asegúrate de tener el backend corriendo (`npm run start:dev` en `backend/`).\n2. La URL base por defecto es `http://localhost:3000`.\n3. Importa el archivo de entorno `postman_environment.json` para tener las variables pre-configuradas.\n\n### Funcionalidades:\n- Registro de cientes\n- Recarga de saldo\n- Flujo de pagos con autenticación 2FA",
         "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
     },
     "variable": [

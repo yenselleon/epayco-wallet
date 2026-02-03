@@ -13,6 +13,7 @@ build/
 .env
 /backend/.env
 /frontend/.env
+/backend/.env.local
 
 # Logs y OS
 *.log
