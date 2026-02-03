@@ -31,17 +31,17 @@ export const LoginPage = () => {
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
         try {
-            const { getClientByDocument } = await import('../services/client.service');
-            const clientData = await getClientByDocument(data.document, data.phone);
+            const { loginClient } = await import('../services/client.service');
+            const response = await loginClient(data.document, data.phone);
 
-            // Usar phone del formulario ya que el backend no lo devuelve
-            login(clientData.document, data.phone, clientData.name);
+            localStorage.setItem('access_token', response.access_token);
+            login(response.user.document, response.user.phone, response.user.name);
 
-            toast.success(SUCCESS_MESSAGES.LOGIN(getFirstName(clientData.name)));
+            toast.success(SUCCESS_MESSAGES.LOGIN(getFirstName(response.user.name)));
             navigate(ROUTES.DASHBOARD);
         } catch (error: any) {
-            if (error.response?.status === HTTP_STATUS.NOT_FOUND) {
-                toast.error('Usuario no encontrado. Verifica tus datos.');
+            if (error.response?.status === HTTP_STATUS.NOT_FOUND || error.response?.status === 401) {
+                toast.error('Credenciales inválidas. Verifica tus datos.');
             } else {
                 toast.error('Error al iniciar sesión');
             }

@@ -76,8 +76,6 @@ export const loginSchema = z.object({
 });
 
 export const rechargeSchema = z.object({
-    document: documentSchema,
-    phone: phoneSchema,
     amount: amountSchema,
 });
 
